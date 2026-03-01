@@ -1,11 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createDatabase, type ClawDatabase } from './db'
-import { MemoryManager } from './memory-manager'
+import { MemoryManager, DEFAULT_BUDGET } from './memory-manager'
 import { MessagesStore } from './messages'
-import { TiersStore } from './tiers'
+import { TiersStore, type TierContents } from './tiers'
 import { runCompaction } from './compactor'
 import type {
   ClawRecallConfig,
+  CompactionConfig,
   Message,
   TierName,
   BuiltContext,
@@ -13,10 +14,10 @@ import type {
   TokenBudgetConfig,
 } from './types'
 
-const DEFAULT_BUDGET: Required<TokenBudgetConfig> = {
-  total: 8000,
-  tiers: 2000,
-  history: 6000,
+const DEFAULT_COMPACTION: Required<CompactionConfig> = {
+  model: 'claude-haiku-4-5-20251001',
+  windowDays: 7,
+  maxDecisions: 5,
 }
 
 export class ClawRecall {
@@ -25,27 +26,21 @@ export class ClawRecall {
   private messagesStore: MessagesStore
   private tiersStore: TiersStore
   private anthropic: Anthropic
-  private config: Required<ClawRecallConfig>
+  private compactionConfig: Required<CompactionConfig>
 
   constructor(userConfig: ClawRecallConfig) {
-    this.config = {
-      dbPath: userConfig.dbPath,
-      anthropicApiKey: userConfig.anthropicApiKey,
-      tokenBudget: { ...DEFAULT_BUDGET, ...userConfig.tokenBudget },
-      compaction: {
-        model: userConfig.compaction?.model ?? 'claude-haiku-4-5-20251001',
-        windowDays: userConfig.compaction?.windowDays ?? 7,
-        maxDecisions: userConfig.compaction?.maxDecisions ?? 5,
-      },
-    }
+    const budget: Required<TokenBudgetConfig> = { ...DEFAULT_BUDGET, ...userConfig.tokenBudget }
+    this.compactionConfig = { ...DEFAULT_COMPACTION, ...userConfig.compaction }
 
-    this.db = createDatabase(this.config.dbPath)
+    this.db = createDatabase(userConfig.dbPath)
     this.messagesStore = new MessagesStore(this.db)
     this.tiersStore = new TiersStore(this.db)
-    this.manager = new MemoryManager(this.db, {
-      tokenBudget: this.config.tokenBudget as Required<TokenBudgetConfig>,
+    this.manager = new MemoryManager({
+      messages: this.messagesStore,
+      tiers: this.tiersStore,
+      budget,
     })
-    this.anthropic = new Anthropic({ apiKey: this.config.anthropicApiKey })
+    this.anthropic = new Anthropic({ apiKey: userConfig.anthropicApiKey })
   }
 
   addMessage(conversationId: string, message: Message): void {
@@ -60,28 +55,27 @@ export class ClawRecall {
     this.manager.setTier(conversationId, tier, content)
   }
 
-  getTiers(conversationId: string) {
+  getTiers(conversationId: string): TierContents {
     return this.manager.getTiers(conversationId)
   }
 
   async compact(conversationId: string): Promise<CompactionResult> {
     const currentTiers = this.tiersStore.getAll(conversationId)
-    const compaction = this.config.compaction as Required<NonNullable<ClawRecallConfig['compaction']>>
 
     const recentMessages = this.messagesStore
-      .getForWindow(conversationId, compaction.windowDays)
+      .getForWindow(conversationId, this.compactionConfig.windowDays)
       .map(m => ({ role: m.role, content: m.content }))
 
     const newTiers = await runCompaction(
       this.anthropic,
-      compaction.model,
+      this.compactionConfig.model,
       currentTiers,
       recentMessages,
-      compaction.maxDecisions
+      this.compactionConfig.maxDecisions
     )
 
     this.tiersStore.setAll(conversationId, newTiers)
-    const archived = this.messagesStore.archiveOlderThan(conversationId, compaction.windowDays)
+    const archived = this.messagesStore.archiveOlderThan(conversationId, this.compactionConfig.windowDays)
 
     return {
       ...newTiers,

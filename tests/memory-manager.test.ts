@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { createDatabase, type ClawDatabase } from '../src/db'
 import { MemoryManager } from '../src/memory-manager'
+import { MessagesStore } from '../src/messages'
+import { TiersStore } from '../src/tiers'
 
 describe('MemoryManager', () => {
   let db: ClawDatabase
@@ -8,8 +10,10 @@ describe('MemoryManager', () => {
 
   beforeEach(() => {
     db = createDatabase(':memory:')
-    manager = new MemoryManager(db, {
-      tokenBudget: { total: 8000, tiers: 2000, history: 6000 },
+    manager = new MemoryManager({
+      messages: new MessagesStore(db),
+      tiers: new TiersStore(db),
+      budget: { total: 8000, tiers: 2000, history: 6000 },
     })
   })
 

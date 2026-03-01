@@ -1,4 +1,5 @@
 export { ClawRecall } from './clawrecall'
+export type { TierContents } from './tiers'
 export type {
   ClawRecallConfig,
   TokenBudgetConfig,

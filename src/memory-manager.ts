@@ -4,25 +4,27 @@ import { MessagesStore } from './messages'
 import { TiersStore, type TierContents } from './tiers'
 import { estimateTokens, fitMessagesInBudget } from './token-budget'
 
-interface MemoryManagerOptions {
-  tokenBudget: Required<TokenBudgetConfig>
-}
-
-const DEFAULT_BUDGET: Required<TokenBudgetConfig> = {
+export const DEFAULT_BUDGET: Required<TokenBudgetConfig> = {
   total: 8000,
   tiers: 2000,
   history: 6000,
 }
 
+interface MemoryManagerDeps {
+  messages: MessagesStore
+  tiers: TiersStore
+  budget?: Required<TokenBudgetConfig>
+}
+
 export class MemoryManager {
-  private messages: MessagesStore
-  private tiers: TiersStore
+  readonly messages: MessagesStore
+  readonly tiers: TiersStore
   private budget: Required<TokenBudgetConfig>
 
-  constructor(db: ClawDatabase, options?: Partial<MemoryManagerOptions>) {
-    this.messages = new MessagesStore(db)
-    this.tiers = new TiersStore(db)
-    this.budget = { ...DEFAULT_BUDGET, ...options?.tokenBudget }
+  constructor(deps: MemoryManagerDeps) {
+    this.messages = deps.messages
+    this.tiers = deps.tiers
+    this.budget = deps.budget ?? DEFAULT_BUDGET
   }
 
   addMessage(conversationId: string, message: Message): void {
