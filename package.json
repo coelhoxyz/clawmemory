@@ -9,7 +9,25 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "keywords": ["ai", "memory", "context", "nanoclaw", "openclaw", "agents"],
+  "keywords": [
+    "ai",
+    "memory",
+    "context",
+    "agents",
+    "llm",
+    "ai-memory",
+    "agent-memory",
+    "context-window",
+    "token-budget",
+    "token-management",
+    "claude",
+    "anthropic",
+    "conversational-ai",
+    "chatbot-memory",
+    "nanoclaw",
+    "openclaw",
+    "sqlite"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=20"
