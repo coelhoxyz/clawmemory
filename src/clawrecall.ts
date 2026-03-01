@@ -5,7 +5,7 @@ import { MessagesStore } from './messages'
 import { TiersStore } from './tiers'
 import { runCompaction } from './compactor'
 import type {
-  ClawMemoryConfig,
+  ClawRecallConfig,
   Message,
   TierName,
   BuiltContext,
@@ -19,15 +19,15 @@ const DEFAULT_BUDGET: Required<TokenBudgetConfig> = {
   history: 6000,
 }
 
-export class ClawMemory {
+export class ClawRecall {
   private db: ClawDatabase
   private manager: MemoryManager
   private messagesStore: MessagesStore
   private tiersStore: TiersStore
   private anthropic: Anthropic
-  private config: Required<ClawMemoryConfig>
+  private config: Required<ClawRecallConfig>
 
-  constructor(userConfig: ClawMemoryConfig) {
+  constructor(userConfig: ClawRecallConfig) {
     this.config = {
       dbPath: userConfig.dbPath,
       anthropicApiKey: userConfig.anthropicApiKey,
@@ -66,7 +66,7 @@ export class ClawMemory {
 
   async compact(conversationId: string): Promise<CompactionResult> {
     const currentTiers = this.tiersStore.getAll(conversationId)
-    const compaction = this.config.compaction as Required<NonNullable<ClawMemoryConfig['compaction']>>
+    const compaction = this.config.compaction as Required<NonNullable<ClawRecallConfig['compaction']>>
 
     const recentMessages = this.messagesStore
       .getForWindow(conversationId, compaction.windowDays)

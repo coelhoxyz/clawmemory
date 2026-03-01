@@ -1,4 +1,4 @@
-export interface ClawMemoryConfig {
+export interface ClawRecallConfig {
   dbPath: string
   anthropicApiKey: string
   tokenBudget?: TokenBudgetConfig

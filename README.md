@@ -1,17 +1,17 @@
-# ClawMemory
+# ClawRecall
 
 Lightweight 3-tier memory and context management for AI agents.
 
-[![npm version](https://img.shields.io/npm/v/clawmemory.svg)](https://www.npmjs.com/package/clawmemory)
+[![npm version](https://img.shields.io/npm/v/clawrecall.svg)](https://www.npmjs.com/package/clawrecall)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-green.svg)](https://nodejs.org/)
 
-## Why ClawMemory?
+## Why ClawRecall?
 
 AI agents lose context between conversations. As interactions grow, token budgets get wasted on stale data, and critical decisions get buried in message history. Most memory solutions are either full frameworks with heavy dependencies or cloud-based services that add latency and cost.
 
-ClawMemory solves this with a focused, standalone library:
+ClawRecall solves this with a focused, standalone library:
 
 - **2 runtime dependencies** — just `better-sqlite3` and `@anthropic-ai/sdk`
 - **Token-budget-aware** — automatically manages what fits in your context window
@@ -30,15 +30,15 @@ ClawMemory solves this with a focused, standalone library:
 ## Install
 
 ```bash
-npm install clawmemory
+npm install clawrecall
 ```
 
 ## Quick Start
 
 ```ts
-import { ClawMemory } from 'clawmemory'
+import { ClawRecall } from 'clawrecall'
 
-const memory = new ClawMemory({
+const memory = new ClawRecall({
   dbPath: './data/memory.db',
   anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
 })
@@ -72,7 +72,7 @@ memory.close()
 
 ## Memory Tiers
 
-ClawMemory organizes agent memory into three purpose-built tiers:
+ClawRecall organizes agent memory into three purpose-built tiers:
 
 | Tier | Purpose | Example |
 |------|---------|---------|
@@ -99,7 +99,7 @@ await memory.compact('user-123')
 ## Configuration
 
 ```ts
-const memory = new ClawMemory({
+const memory = new ClawRecall({
   dbPath: './data/memory.db',
   anthropicApiKey: 'sk-...',
   tokenBudget: {
@@ -117,12 +117,12 @@ const memory = new ClawMemory({
 
 ## Integration Example
 
-ClawMemory works with any agent system. Here's an example with a message polling loop:
+ClawRecall works with any agent system. Here's an example with a message polling loop:
 
 ```ts
-import { ClawMemory } from 'clawmemory'
+import { ClawRecall } from 'clawrecall'
 
-const memory = new ClawMemory({
+const memory = new ClawRecall({
   dbPath: './data/agent-memory.db',
   anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
 })
@@ -145,9 +145,9 @@ async function dailyCompaction(groupIds: string[]) {
 }
 ```
 
-## How ClawMemory Compares
+## How ClawRecall Compares
 
-| Feature | ClawMemory | Mem0 | Letta (MemGPT) | Mastra |
+| Feature | ClawRecall | Mem0 | Letta (MemGPT) | Mastra |
 |---------|-----------|------|----------------|--------|
 | Language | TypeScript | Python | Python | TypeScript |
 | Dependencies | 2 | Many | Many | Full framework |
@@ -157,33 +157,33 @@ async function dailyCompaction(groupIds: string[]) {
 | Standalone library | Yes | Yes | Yes | No (framework) |
 | Setup required | Zero-config | API keys + infra | Server setup | Framework setup |
 
-ClawMemory is designed for developers who want structured memory management without adopting a full framework or setting up cloud infrastructure.
+ClawRecall is designed for developers who want structured memory management without adopting a full framework or setting up cloud infrastructure.
 
 ## FAQ
 
-### What problem does ClawMemory solve?
+### What problem does ClawRecall solve?
 
-AI agents lose context between conversations and waste tokens on stale data. ClawMemory provides structured, budget-aware memory that keeps agents informed without exceeding context window limits.
+AI agents lose context between conversations and waste tokens on stale data. ClawRecall provides structured, budget-aware memory that keeps agents informed without exceeding context window limits.
 
-### How is ClawMemory different from Mem0 or MemGPT?
+### How is ClawRecall different from Mem0 or MemGPT?
 
-ClawMemory is a lightweight TypeScript library with only 2 runtime dependencies and local SQLite storage. It focuses on token budget management and a 3-tier architecture (permanent/recent/decisions), rather than being a full memory platform or framework.
+ClawRecall is a lightweight TypeScript library with only 2 runtime dependencies and local SQLite storage. It focuses on token budget management and a 3-tier architecture (permanent/recent/decisions), rather than being a full memory platform or framework.
 
-### Does ClawMemory require a cloud service?
+### Does ClawRecall require a cloud service?
 
-No. ClawMemory stores everything locally in SQLite. The only optional cloud call is for AI-powered compaction, which uses Claude Haiku at an estimated cost of ~$0.001/day per conversation group.
+No. ClawRecall stores everything locally in SQLite. The only optional cloud call is for AI-powered compaction, which uses Claude Haiku at an estimated cost of ~$0.001/day per conversation group.
 
-### What AI models does ClawMemory work with?
+### What AI models does ClawRecall work with?
 
-ClawMemory is model-agnostic for context building — `buildContext()` returns a system prompt and messages that work with any LLM (Claude, GPT, Gemini, Llama, etc.). AI compaction uses Anthropic's Claude API by default.
+ClawRecall is model-agnostic for context building — `buildContext()` returns a system prompt and messages that work with any LLM (Claude, GPT, Gemini, Llama, etc.). AI compaction uses Anthropic's Claude API by default.
 
 ### How much does compaction cost?
 
 Compaction uses Claude Haiku, which processes a 7-day message window at approximately $0.001 per run. Running daily for one conversation group costs roughly $0.03/month.
 
-### Can I use ClawMemory with LangChain or other frameworks?
+### Can I use ClawRecall with LangChain or other frameworks?
 
-Yes. ClawMemory is a standalone library. Use `buildContext()` to get a system prompt and message array, then pass them to any LLM framework or direct API call.
+Yes. ClawRecall is a standalone library. Use `buildContext()` to get a system prompt and message array, then pass them to any LLM framework or direct API call.
 
 ## Tech Stack
 

@@ -1,6 +1,6 @@
-import { ClawMemory } from '../src'
+import { ClawRecall } from '../src'
 
-const memory = new ClawMemory({
+const memory = new ClawRecall({
   dbPath: './data/memory.db',
   anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
 })

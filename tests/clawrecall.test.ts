@@ -1,15 +1,15 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { ClawMemory } from '../src/clawmemory'
+import { ClawRecall } from '../src/clawrecall'
 
-describe('ClawMemory', () => {
-  let memory: ClawMemory
+describe('ClawRecall', () => {
+  let memory: ClawRecall
 
   afterEach(() => {
     memory?.close()
   })
 
   it('initializes with in-memory database', () => {
-    memory = new ClawMemory({
+    memory = new ClawRecall({
       dbPath: ':memory:',
       anthropicApiKey: 'test-key',
     })
@@ -17,7 +17,7 @@ describe('ClawMemory', () => {
   })
 
   it('full flow: add messages, set tiers, build context', () => {
-    memory = new ClawMemory({
+    memory = new ClawRecall({
       dbPath: ':memory:',
       anthropicApiKey: 'test-key',
     })
@@ -32,7 +32,7 @@ describe('ClawMemory', () => {
   })
 
   it('applies default token budgets', () => {
-    memory = new ClawMemory({
+    memory = new ClawRecall({
       dbPath: ':memory:',
       anthropicApiKey: 'test-key',
     })
@@ -43,7 +43,7 @@ describe('ClawMemory', () => {
   })
 
   it('accepts custom token budgets', () => {
-    memory = new ClawMemory({
+    memory = new ClawRecall({
       dbPath: ':memory:',
       anthropicApiKey: 'test-key',
       tokenBudget: { total: 500, tiers: 100, history: 400 },

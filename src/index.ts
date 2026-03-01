@@ -1,6 +1,6 @@
-export { ClawMemory } from './clawmemory'
+export { ClawRecall } from './clawrecall'
 export type {
-  ClawMemoryConfig,
+  ClawRecallConfig,
   TokenBudgetConfig,
   CompactionConfig,
   TierName,

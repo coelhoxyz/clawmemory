@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { createDatabase, type ClawDatabase } from '../src/db'
 import { unlinkSync } from 'fs'
 
-const TEST_DB = '/tmp/clawmemory-test-db.db'
+const TEST_DB = '/tmp/clawrecall-test-db.db'
 
 describe('createDatabase', () => {
   let db: ClawDatabase

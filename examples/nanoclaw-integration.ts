@@ -1,12 +1,12 @@
 /**
- * Example: Integrating ClawMemory with NanoClaw
+ * Example: Integrating ClawRecall with NanoClaw
  *
  * In NanoClaw's polling loop, before dispatching to the container,
- * use ClawMemory to build an optimized context.
+ * use ClawRecall to build an optimized context.
  */
-import { ClawMemory } from '../src'
+import { ClawRecall } from '../src'
 
-const memory = new ClawMemory({
+const memory = new ClawRecall({
   dbPath: './data/nanoclaw-memory.db',
   anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
   tokenBudget: {

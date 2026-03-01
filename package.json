@@ -1,5 +1,5 @@
 {
-  "name": "clawmemory",
+  "name": "clawrecall",
   "version": "0.1.0",
   "description": "3-tier memory and context management for AI agents",
   "main": "dist/index.js",
