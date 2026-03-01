@@ -1,0 +1,7 @@
+src/
+tests/
+docs/
+examples/
+.claude/
+tsconfig.json
+*.test.ts
